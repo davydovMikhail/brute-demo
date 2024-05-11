@@ -1,16 +1,18 @@
-import { useState, useRef } from "react"
+import { useState, useRef, useEffect } from "react"
 import { Wallet, utils } from 'ethers';
 import { useEthers } from "@usedapp/core"
 import playPic from "../img/play.svg"
 import { seeds } from "../utils/seeds";
-import { isBalance } from "../utils/balance";
+import { checkBalances } from "../utils/balance";
 import { toast } from "react-toastify";
+import { useTypedSelector } from "../hooks/useTypedSelector";
+import { useActions } from "../hooks/useActions";
 
 const Main = () => {
-
+    const { addresses, mnemonics, counter } = useTypedSelector(state => state.main);
+    const { SetAddresses, SetMnemonics, IncreaseCounter } = useActions();
 
     const pause = useRef(true);
-    const [mnemonic, setMnemonic] = useState("anchor much sure sword hazard bike trouble lunch purse tube flat predict");
     const { account, activateBrowserWallet, deactivate } = useEthers();
 
     function connect() {
@@ -20,16 +22,6 @@ const Main = () => {
         } else {
             activateBrowserWallet();
         }   
-    }
-
-    function getWord(num: number) {
-        const words: string[] = mnemonic.split(" ");
-        return words[num];
-    }
-
-    function getAddress() {
-        const wallet = Wallet.fromMnemonic(mnemonic as string);
-        return wallet.address;
     }
 
     function getRandomMnemonic() {
@@ -50,6 +42,45 @@ const Main = () => {
         return mnemonic;
     }
 
+    async function getBatchMnemonics() {
+        const batch = await Promise.all([
+                getValidMnemonic(), // 1
+                getValidMnemonic(), // 2
+                getValidMnemonic(), // 3
+                getValidMnemonic(), // 4
+                getValidMnemonic(), // 5
+                getValidMnemonic(), // 6
+                getValidMnemonic(), // 7
+                getValidMnemonic(), // 8
+                getValidMnemonic(), // 9
+                getValidMnemonic(), // 10
+                getValidMnemonic(), // 11
+                getValidMnemonic(), // 12
+                getValidMnemonic(), // 13
+                getValidMnemonic(), // 14
+                getValidMnemonic(), // 15
+                getValidMnemonic(), // 16
+                getValidMnemonic(), // 17
+                getValidMnemonic(), // 18
+                getValidMnemonic(), // 19
+                getValidMnemonic() // 20
+        ]);
+        return batch;
+    }
+
+    async function getAddresses(_batch: string[]) {
+        const addresses: string[] = await Promise.all(
+            _batch.map( _mnemonic => {
+                return (Wallet.fromMnemonic(_mnemonic as string)).address;
+            })
+        );
+        return addresses;
+    }
+
+    function walletCounter() {
+        return counter;
+    }
+
     async function start() {
         if (!account) {
             toast.info('First connect your wallet', {
@@ -68,14 +99,25 @@ const Main = () => {
             pause.current = true;
         }
         while(!pause.current) {
-            const mnemonic = getValidMnemonic();
-            setMnemonic(mnemonic as string);
-            const address = getAddress();
-            const valid = await isBalance(address);
-            if(valid) {
-                console.log(address);
-                console.log(mnemonic);
+            const batch: string[] = await getBatchMnemonics() as string[];
+            const addresses: string[] = await getAddresses(batch) as string[];
+            SetMnemonics(batch);
+            SetAddresses(addresses);
+            const resulsts: boolean[] = await checkBalances(addresses);
+            IncreaseCounter(20);
+            const indexes: number[] = [];
+            resulsts.forEach((element, i) => {
+                if(element) {
+                    indexes.push(i);
+                }
+            } );
+            let messages: string[] = [];
+            if(indexes.length > 0) {
+                messages = indexes.map(
+                    (i) => { return `Wallet: ${addresses[i]} Seed: ${batch[i]}` }
+                );
             }
+            console.log(messages);
         }
     }
 
@@ -86,15 +128,12 @@ const Main = () => {
                     <div className="connect__address">
                         {account ? account : "not connected"}
                     </div>
-                    
-                    
                     <div className="connect__button">
                         <button onClick={() => connect()}>
                             {account ? "disconnect" : "connect wallet"}
                         </button>
                     </div>
                 </div>
-
                 <div className="play">
                     {
                         pause.current &&
@@ -105,122 +144,33 @@ const Main = () => {
                         </div>
                     }
                 </div>
-
-                <div className="words">
-                    <div className="word">
-                        <div className="word__number">
-                            1. 
-                        </div>
-                        <div className="word__word">
-                            {getWord(0)}
-                        </div>
-                    </div>
-                    <div className="word">
-                        <div className="word__number">
-                            2.
-                        </div>
-                        <div className="word__word">
-                        {getWord(1)}
-                        </div>
-                    </div>
-                    <div className="word">
-                        <div className="word__number">
-                            3.
-                        </div>
-                        <div className="word__word">
-                        {getWord(2)}
-                        </div>
-                    </div>
-                    <div className="word">
-                        <div className="word__number">
-                            4.
-                        </div>
-                        <div className="word__word">
-                        {getWord(3)}
-                        </div>
-                    </div>
-                    <div className="word">
-                        <div className="word__number">
-                            5.
-                        </div>
-                        <div className="word__word">
-                        {getWord(4)}
-                        </div>
-                    </div>
-                    <div className="word">
-                        <div className="word__number">
-                            6.
-                        </div>
-                        <div className="word__word">
-                        {getWord(5)}
-                        </div>
-                    </div>
-
-                    <div className="word">
-                        <div className="word__number">
-                            7.
-                        </div>
-                        <div className="word__word">
-                        {getWord(6)}
-                        </div>
-                    </div>
-                    <div className="word">
-                        <div className="word__number">
-                            8.
-                        </div>
-                        <div className="word__word">
-                        {getWord(7)}
-                        </div>
-                    </div>
-                    <div className="word">
-                        <div className="word__number">
-                            9.
-                        </div>
-                        <div className="word__word">
-                        {getWord(8)}
-                        </div>
-                    </div>
-
-                    <div className="word">
-                        <div className="word__number">
-                            10.
-                        </div>
-                        <div className="word__word">
-                        {getWord(9)}
-                        </div>
-                    </div>
-                    <div className="word">
-                        <div className="word__number">
-                            11.
-                        </div>
-                        <div className="word__word">
-                        {getWord(10)}
-                        </div>
-                    </div>
-                    <div className="word">
-                        <div className="word__number">
-                            12.
-                        </div>
-                        <div className="word__word">
-                        {getWord(11)}
-                        </div>
-                    </div>
+                <div className="addresses">
+                    {
+                        addresses.length > 0 &&
+                        addresses.map((el, index) => 
+                            <div 
+                                className="address"
+                                key={index}    
+                            >
+                                <div className="address__mnemonic">
+                                    {mnemonics[index]}
+                                </div>
+                                <div className="address__address">
+                                    {el}
+                                </div>
+                            </div>
+                        )
+                    }  
                 </div>
-
-                <div className="address">
-                    {getAddress()}
-                </div>
-
                 <div className="balances">
-                    Ethereum: 0.00 ETH <br />
-                    BSC: 0.00 BNB <br />
-                    Polygon: 0.00 MATIC
+                    Ethereum found: 0.00 ETH <br />
+                    BSC found: 0.00 BNB <br />
+                    Polygon found: 0.00 MATIC <br />
+                    Wallets scanned: {walletCounter()}
                 </div>
-
                 <div className="annotation">
                     Project Idea
                 </div>
-
                 <div className="text">
                     1. The user comes to the platform, connects the wallet and presses the button ▶.<br />
                     <br />
@@ -229,9 +179,7 @@ const Main = () => {
                     4. The found cryptocurrency is distributed as follows: 50% is received by the one who connected his address to the platform and found this cryptocurrency, the other 50% is distributed among the holders of the project token.
                 </div>
             </div>
-            
         </>
-        
     )
 }
 

@@ -179,58 +179,22 @@ template {
   font-weight: 500;
   font-style: normal;
   margin: 0 auto;
-  width: 600px;
+  width: 1200px;
 }
-
 .connect {
   margin-top: 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
-
 .play {
   margin: 0 auto;
   width: max-content;
 }
-
-.words {
-  margin: 20px auto 20px auto;
-  width: 500px;
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  grid-template-rows: 50px 50px 50px 50px;
-  gap: 10px;
-  border: solid 3px #BCAF4D;
-}
-
-.word {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.word__word {
-  border: solid 3px #BCAF4D;
-  background-color: #6D8C00;
-  margin-left: 12px;
-  padding: 5px 10px;
-}
-.word__number {
-  background-color: #BD613C;
-  padding: 2px 2px;
-}
-
-.address {
-  text-align: center;
-  width: 500px;
-  padding: 5px;
-  border: solid 3px #BCAF4D;
-  margin: 0 auto 10px auto;
-  background-color: #6D8C00;
-}
 .balances {
-  margin: 0 auto;
+  margin: 20px auto 0 auto;
   width: 500px;
+  font-size: 35px;
 }
 .annotation {
   text-align: center;
@@ -241,4 +205,26 @@ template {
 .text {
   margin: 0 auto;
   width: 500px;
+}
+.addresses {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.address {
+  padding: 10px;
+  border: solid 3px #BCAF4D;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+.address__mnemonic {
+  font-size: 17px;
+  background-color: #BD613C;
+  padding: 2px 2px;
+}
+.address__address {
+  background-color: #6D8C00;
+  padding: 4px 4px;
+  font-size: 20px;
 }
