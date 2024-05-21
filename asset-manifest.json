@@ -1,14 +1,14 @@
 {
   "files": {
     "main.css": "/brute-demo/static/css/main.90e233c0.css",
-    "main.js": "/brute-demo/static/js/main.71c08b19.js",
+    "main.js": "/brute-demo/static/js/main.d052b379.js",
     "static/media/play.svg": "/brute-demo/static/media/play.bce4ab778b95c94b8876682c814e2d10.svg",
     "index.html": "/brute-demo/index.html",
     "main.90e233c0.css.map": "/brute-demo/static/css/main.90e233c0.css.map",
-    "main.71c08b19.js.map": "/brute-demo/static/js/main.71c08b19.js.map"
+    "main.d052b379.js.map": "/brute-demo/static/js/main.d052b379.js.map"
   },
   "entrypoints": [
     "static/css/main.90e233c0.css",
-    "static/js/main.71c08b19.js"
+    "static/js/main.d052b379.js"
   ]
 }
